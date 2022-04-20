@@ -5,7 +5,7 @@ import { Product } from '../models/product';
 import { ProductsService } from 'src/services/products.service';
 import { CreateProductInput } from '../inputs/create-product-input';
 
-@Resolver()
+@Resolver(() => Product)
 export class ProductsResolver {
     constructor(private productsService: ProductsService) { }
 
@@ -15,8 +15,8 @@ export class ProductsResolver {
     }
 
     @Mutation(() => Product)
-    //@UseGuards(AuthorizationGuard)
-    createProduct(@Args('data') data: CreateProductInput){
+    @UseGuards(AuthorizationGuard)
+    createProduct(@Args('data') data: CreateProductInput) {
         return this.productsService.createProduct(data)
     }
 }

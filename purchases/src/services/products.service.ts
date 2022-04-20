@@ -5,21 +5,29 @@ import { CreateProductInput } from "src/http/graphql/inputs/create-product-input
 
 @Injectable()
 export class ProductsService {
-    constructor(private prisma: PrismaService){}
+    constructor(private prisma: PrismaService) { }
 
-    listAllProducts(){
+    listAllProducts() {
         return this.prisma.product.findMany()
     }
 
-    async createProduct({title}: CreateProductInput) {
-        const slug = slugify(title, {lower: true})
-        const productWithSameSlug = await this.prisma
-        .product.findUnique({
+    getProductById(id: string) {
+        return this.prisma.product.findUnique({
             where: {
-                slug,
+                id
             }
         })
-        if(productWithSameSlug) {
+    }
+
+    async createProduct({ title }: CreateProductInput) {
+        const slug = slugify(title, { lower: true })
+        const productWithSameSlug = await this.prisma
+            .product.findUnique({
+                where: {
+                    slug,
+                }
+            })
+        if (productWithSameSlug) {
             throw new Error('Another Product with the same slug already exists')
         }
         return this.prisma.product.create({
